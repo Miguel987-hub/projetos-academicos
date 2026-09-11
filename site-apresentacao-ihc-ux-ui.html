@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Apresentação integrada sobre IHC, Design Thinking, Heurísticas de Nielsen, WCAG e UX/UI." />
+  <title>IHC · Design Thinking · UX/UI · WCAG</title>
+
+  <style>
+    :root {
+      --bg: #07111f;
+      --surface: #0d1b2a;
+      --surface-2: #11263b;
+      --surface-3: #16324d;
+      --text: #eef6ff;
+      --muted: #b8c7d9;
+      --primary: #54d2d2;
+      --primary-2: #7de2d1;
+      --accent: #ffca6a;
+      --danger: #ff6b7d;
+      --line: rgba(255,255,255,.10);
+      --shadow: 0 22px 60px rgba(0,0,0,.28);
+      --radius: 22px;
+      --max: 1160px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 96px;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(84, 210, 210, .16), transparent 26rem),
+        radial-gradient(circle at 95% 20%, rgba(255, 202, 106, .10), transparent 22rem),
+        var(--bg);
+      line-height: 1.65;
+    }
+
+    a { color: inherit; }
+
+    .progress {
+      position: fixed;
+      inset: 0 auto auto 0;
+      z-index: 1000;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      border-bottom: 1px solid var(--line);
+      background: rgba(7,17,31,.88);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar-inner {
+      width: min(var(--max), calc(100% - 32px));
+      margin: auto;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: #06212c;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 12px 30px rgba(84,210,210,.18);
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 10px 0;
+    }
+    nav::-webkit-scrollbar { display: none; }
+
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: .91rem;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: .2s ease;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--text);
+      background: rgba(84,210,210,.12);
+    }
+
+    .hero {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      min-height: 76vh;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 48px;
+      align-items: center;
+      padding: 78px 0 56px;
+    }
+
+    .eyebrow,
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid rgba(84,210,210,.24);
+      border-radius: 999px;
+      color: var(--primary-2);
+      background: rgba(84,210,210,.08);
+      font-size: .84rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    h1 {
+      max-width: 850px;
+      margin: 20px 0 18px;
+      font-size: clamp(2.8rem, 7vw, 5.8rem);
+      line-height: .98;
+      letter-spacing: -.06em;
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero-copy {
+      max-width: 740px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+    }
+
+    .hero-actions {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 800;
+      border: 1px solid var(--line);
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      color: #06212c;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      border: 0;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.05);
+    }
+
+    .hero-panel {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(17,38,59,.90), rgba(13,27,42,.88));
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+
+    .hero-panel p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .topic-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .topic {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .topic-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(84,210,210,.12);
+      font-size: 1.2rem;
+    }
+
+    .topic strong { display: block; }
+    .topic small { color: var(--muted); }
+
+    main {
+      width: min(var(--max), calc(100% - 32px));
+      margin: auto;
+      padding-bottom: 84px;
+    }
+
+    .section {
+      padding: 72px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: .75fr 1.25fr;
+      gap: 48px;
+      align-items: start;
+      margin-bottom: 34px;
+    }
+
+    .section h2 {
+      margin: 14px 0 0;
+      font-size: clamp(2rem, 5vw, 3.7rem);
+      line-height: 1.05;
+      letter-spacing: -.045em;
+    }
+
+    .lead {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-5 { grid-template-columns: repeat(5, minmax(0,1fr)); }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      background: linear-gradient(180deg, rgba(17,38,59,.72), rgba(13,27,42,.72));
+      box-shadow: 0 14px 38px rgba(0,0,0,.12);
+    }
+
+    .card h3 {
+      margin: 10px 0 8px;
+      line-height: 1.25;
+      font-size: 1.12rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .mini-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: rgba(84,210,210,.12);
+      font-size: 1.25rem;
+    }
+
+    .flow-card {
+      position: relative;
+      min-height: 190px;
+      overflow: hidden;
+    }
+
+    .step-number {
+      font-size: 2.6rem;
+      font-weight: 900;
+      line-height: 1;
+      color: rgba(84,210,210,.24);
+    }
+
+    .heuristics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 16px;
+    }
+
+    .heuristic {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .heuristic-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .heuristic-num {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      color: #06212c;
+      background: var(--accent);
+      font-weight: 900;
+    }
+
+    .heuristic h3 {
+      margin: 1px 0 0;
+      line-height: 1.25;
+    }
+
+    .heuristic p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .example {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-left: 3px solid var(--primary);
+      border-radius: 0 12px 12px 0;
+      background: rgba(84,210,210,.075);
+      color: #dceef2;
+    }
+
+    .benefits {
+      margin-top: 22px;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .pill-list li {
+      padding: 9px 13px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.035);
+    }
+
+    .wcag-principles {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .wcag-principles .card {
+      min-height: 160px;
+    }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      margin-top: 18px;
+    }
+
+    .swatch {
+      min-height: 110px;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+      font-weight: 900;
+    }
+
+    .swatch small {
+      display: block;
+      opacity: .8;
+      font-weight: 600;
+    }
+
+    .swatch-1 { background: #1a1a2e; color: #fff; }
+    .swatch-2 { background: #16213e; color: #e94560; }
+    .swatch-3 { background: #0f3460; color: #fff; }
+    .swatch-4 { background: #e0e0e0; color: #1a1a2e; }
+
+    .callout {
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,202,106,.22);
+      background: linear-gradient(135deg, rgba(255,202,106,.10), rgba(255,255,255,.025));
+    }
+
+    .callout strong { color: var(--accent); }
+
+    .summary {
+      padding: 42px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background:
+        linear-gradient(135deg, rgba(84,210,210,.10), rgba(255,202,106,.05)),
+        rgba(13,27,42,.72);
+      box-shadow: var(--shadow);
+    }
+
+    .summary h2 {
+      margin-top: 0;
+      font-size: clamp(2rem, 4vw, 3rem);
+    }
+
+    .summary p {
+      color: var(--muted);
+      max-width: 850px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 16px 46px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .keyboard-hint {
+      margin-top: 14px;
+      font-size: .82rem;
+      color: #8397ae;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .section-head {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 58px;
+      }
+
+      .grid-5 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-3 { grid-template-columns: 1fr; }
+      .wcag-principles { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0;
+        padding-top: 10px;
+      }
+
+      nav {
+        width: 100%;
+      }
+
+      .heuristics,
+      .grid-2,
+      .palette,
+      .wcag-principles,
+      .grid-5 {
+        grid-template-columns: 1fr;
+      }
+
+      .section { padding: 54px 0; }
+      .summary { padding: 26px; }
+    }
+
+    @media print {
+      .topbar, .progress, .hero-actions, .keyboard-hint { display: none !important; }
+      body { background: #fff; color: #111; }
+      .hero, main { width: 100%; }
+      .section, .card, .heuristic, .summary, .callout {
+        break-inside: avoid;
+        border-color: #ccc;
+        background: #fff;
+        color: #111;
+        box-shadow: none;
+      }
+      .lead, .card p, .heuristic p, .summary p { color: #333; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress" id="progress"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">🧠</div>
+        <span>IHC · Design · UX/UI</span>
+      </div>
+
+      <nav aria-label="Navegação principal">
+        <a href="#inicio" class="active">Início</a>
+        <a href="#ihc">IHC</a>
+        <a href="#design-thinking">Design Thinking</a>
+        <a href="#heuristicas">Heurísticas</a>
+        <a href="#wcag">WCAG</a>
+        <a href="#uxui">UX/UI</a>
+        <a href="#conclusao">Conclusão</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="inicio">
+    <div>
+      <span class="eyebrow">Apresentação integrada</span>
+      <h1>Interfaces melhores começam por <span>entender pessoas.</span></h1>
+      <p class="hero-copy">
+        Um único site para apresentar os principais conceitos de Interação Humano-Computador,
+        Design Thinking, Heurísticas de Nielsen, acessibilidade pela WCAG e a aplicação de UX/UI
+        no desenvolvimento de interfaces digitais.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#ihc">Começar apresentação</a>
+        <a class="btn btn-secondary" href="#heuristicas">Ver as 10 heurísticas</a>
+      </div>
+
+      <div class="keyboard-hint">Dica: use o menu superior para navegar entre os temas.</div>
+    </div>
+
+    <aside class="hero-panel" aria-label="Resumo dos conteúdos">
+      <h2>O que você vai apresentar</h2>
+      <p>Os conteúdos originais foram reorganizados em uma sequência lógica e didática.</p>
+
+      <div class="topic-list">
+        <div class="topic">
+          <div class="topic-icon">🔍</div>
+          <div><strong>IHC</strong><small>Usabilidade, acessibilidade e experiência.</small></div>
+        </div>
+        <div class="topic">
+          <div class="topic-icon">💡</div>
+          <div><strong>Design Thinking</strong><small>Do entendimento do usuário ao teste.</small></div>
+        </div>
+        <div class="topic">
+          <div class="topic-icon">🧭</div>
+          <div><strong>Heurísticas de Nielsen</strong><small>10 princípios para avaliar interfaces.</small></div>
+        </div>
+        <div class="topic">
+          <div class="topic-icon">♿</div>
+          <div><strong>WCAG</strong><small>Acessibilidade, contraste e paletas.</small></div>
+        </div>
+        <div class="topic">
+          <div class="topic-icon">🖥️</div>
+          <div><strong>UX/UI</strong><small>Pesquisa, prototipação, visual e testes.</small></div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <main>
+    <section class="section" id="ihc">
+      <div class="section-head">
+        <div>
+          <span class="section-tag">01 · Fundamentos</span>
+          <h2>Interação Humano-Computador</h2>
+        </div>
+        <p class="lead">
+          A IHC estuda a relação entre pessoas e sistemas computacionais. O objetivo é construir
+          interfaces eficientes, intuitivas e agradáveis, considerando aspectos cognitivos,
+          ergonômicos e culturais e colocando o ser humano no centro do processo de design.
+        </p>
+      </div>
+
+      <div class="grid grid-3">
+        <article class="card">
+          <div class="mini-icon">⚡</div>
+          <h3>Usabilidade</h3>
+          <p>
+            Busca facilitar o aprendizado, aumentar a eficiência, melhorar a memorização,
+            reduzir erros e proporcionar maior satisfação durante o uso.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="mini-icon">♿</div>
+          <h3>Acessibilidade</h3>
+          <p>
+            Garante que pessoas com diferentes habilidades e necessidades possam utilizar
+            o sistema e compreender suas informações.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="mini-icon">✨</div>
+          <h3>Experiência do usuário</h3>
+          <p>
+            Considera a experiência global do usuário, incluindo suas emoções, percepções,
+            expectativas e sensações ao interagir com o produto.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="design-thinking">
+      <div class="section-head">
+        <div>
+          <span class="section-tag">02 · Processo</span>
+          <h2>Design Thinking</h2>
+        </div>
+        <p class="lead">
+          Design Thinking é uma abordagem centrada no ser humano para resolver problemas.
+          Combina empatia, criatividade e raciocínio analítico. Suas etapas não precisam ocorrer
+          de forma rígida: o processo pode avançar, voltar e se repetir conforme os aprendizados.
+        </p>
+      </div>
+
+      <div class="grid grid-5">
+        <article class="card flow-card">
+          <div class="step-number">01</div>
+          <h3>Empatizar</h3>
+          <p>Entender necessidades, comportamentos, contexto e dores dos usuários.</p>
+        </article>
+
+        <article class="card flow-card">
+          <div class="step-number">02</div>
+          <h3>Definir</h3>
+          <p>Organizar os aprendizados e formular de maneira clara o problema que será resolvido.</p>
+        </article>
+
+        <article class="card flow-card">
+          <div class="step-number">03</div>
+          <h3>Idear</h3>
+          <p>Gerar várias alternativas e possibilidades de solução antes de escolher uma direção.</p>
+        </article>
+
+        <article class="card flow-card">
+          <div class="step-number">04</div>
+          <h3>Prototipar</h3>
+          <p>Transformar ideias em representações tangíveis que possam ser analisadas e discutidas.</p>
+        </article>
+
+        <article class="card flow-card">
+          <div class="step-number">05</div>
+          <h3>Testar</h3>
+          <p>Validar os protótipos com usuários reais e usar o retorno para aperfeiçoar a solução.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="heuristicas">
+      <div class="section-head">
+        <div>
+          <span class="section-tag">03 · Avaliação</span>
+          <h2>As 10 Heurísticas de Nielsen</h2>
+        </div>
+        <p class="lead">
+          As heurísticas de Nielsen são princípios gerais de usabilidade usados para identificar
+          problemas de interface e melhorar a experiência. Elas podem ser aplicadas em sites,
+          aplicativos, sistemas empresariais, jogos e outros produtos digitais.
+        </p>
+      </div>
+
+      <div class="heuristics">
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">1</div>
+            <h3>Visibilidade do status do sistema</h3>
+          </div>
+          <p>O sistema deve manter o usuário informado sobre o que está acontecendo e responder em tempo adequado.</p>
+          <div class="example"><strong>Exemplo:</strong> mostrar uma barra de progresso durante um download.</div>
+        </article>
+
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">2</div>
+            <h3>Correspondência entre sistema e mundo real</h3>
+          </div>
+          <p>A interface deve usar palavras, símbolos e conceitos familiares ao público, evitando jargões desnecessários.</p>
+          <div class="example"><strong>Exemplo:</strong> usar o ícone de uma lixeira para representar exclusão.</div>
+        </article>
+
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">3</div>
+            <h3>Controle e liberdade do usuário</h3>
+          </div>
+          <p>O usuário precisa de maneiras simples de cancelar, retornar ou desfazer ações quando cometer um erro.</p>
+          <div class="example"><strong>Exemplo:</strong> disponibilizar Ctrl + Z em um editor de texto.</div>
+        </article>
+
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">4</div>
+            <h3>Consistência e padrões</h3>
+          </div>
+          <p>Elementos semelhantes devem apresentar aparência e funcionamento consistentes ao longo da interface.</p>
+          <div class="example"><strong>Exemplo:</strong> manter o mesmo padrão visual para os botões principais.</div>
+        </article>
+
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">5</div>
+            <h3>Prevenção de erros</h3>
+          </div>
+          <p>Uma boa interface não deve apenas explicar erros: ela deve tentar impedir que eles aconteçam.</p>
+          <div class="example"><strong>Exemplo:</strong> pedir confirmação antes de excluir permanentemente um arquivo.</div>
+        </article>
+
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">6</div>
+            <h3>Reconhecimento em vez de memorização</h3>
+          </div>
+          <p>Comandos, opções e informações importantes devem estar visíveis ou ser facilmente recuperáveis.</p>
+          <div class="example"><strong>Exemplo:</strong> mostrar pesquisas ou produtos visualizados anteriormente.</div>
+        </article>
+
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">7</div>
+            <h3>Flexibilidade e eficiência de uso</h3>
+          </div>
+          <p>O sistema deve atender iniciantes sem deixar de oferecer atalhos que acelerem o trabalho de usuários experientes.</p>
+          <div class="example"><strong>Exemplo:</strong> combinar menus visuais com atalhos de teclado.</div>
+        </article>
+
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">8</div>
+            <h3>Design estético e minimalista</h3>
+          </div>
+          <p>A interface deve priorizar informações relevantes e evitar excesso de elementos que desviem a atenção.</p>
+          <div class="example"><strong>Exemplo:</strong> uma tela de login simples, focada apenas nos campos necessários.</div>
+        </article>
+
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">9</div>
+            <h3>Reconhecer, diagnosticar e recuperar erros</h3>
+          </div>
+          <p>Mensagens de erro devem explicar claramente o problema e, quando possível, apontar como resolvê-lo.</p>
+          <div class="example"><strong>Exemplo:</strong> explicar um erro 404 e oferecer um caminho de volta para o início.</div>
+        </article>
+
+        <article class="heuristic">
+          <div class="heuristic-top">
+            <div class="heuristic-num">10</div>
+            <h3>Ajuda e documentação</h3>
+          </div>
+          <p>Mesmo interfaces simples podem exigir apoio. Tutoriais, FAQ e documentação devem estar disponíveis quando necessário.</p>
+          <div class="example"><strong>Exemplo:</strong> uma seção de ajuda explicando as principais funcionalidades.</div>
+        </article>
+      </div>
+
+      <div class="card benefits">
+        <h3>Por que usar essas heurísticas?</h3>
+        <p>
+          Elas ajudam a identificar problemas de usabilidade durante o desenvolvimento ou na avaliação
+          de produtos já existentes, sem exigir necessariamente ferramentas complexas.
+        </p>
+        <ul class="pill-list">
+          <li>Melhor experiência</li>
+          <li>Menos erros</li>
+          <li>Aprendizado mais fácil</li>
+          <li>Mais eficiência</li>
+          <li>Problemas identificados cedo</li>
+          <li>Maior satisfação</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="wcag">
+      <div class="section-head">
+        <div>
+          <span class="section-tag">04 · Acessibilidade</span>
+          <h2>WCAG e contraste de cores</h2>
+        </div>
+        <p class="lead">
+          As WCAG — Web Content Accessibility Guidelines — reúnem recomendações internacionais
+          para tornar conteúdos web mais acessíveis. Elas são organizadas em quatro pilares:
+          perceptível, operável, compreensível e robusto.
+        </p>
+      </div>
+
+      <div class="wcag-principles">
+        <article class="card">
+          <div class="mini-icon">👁️</div>
+          <h3>Perceptível</h3>
+          <p>O conteúdo deve poder ser percebido de diferentes maneiras pelos usuários.</p>
+        </article>
+        <article class="card">
+          <div class="mini-icon">🎛️</div>
+          <h3>Operável</h3>
+          <p>A navegação e os controles precisam ser utilizáveis em diferentes condições.</p>
+        </article>
+        <article class="card">
+          <div class="mini-icon">🧩</div>
+          <h3>Compreensível</h3>
+          <p>Informações e comportamentos da interface devem ser claros e previsíveis.</p>
+        </article>
+        <article class="card">
+          <div class="mini-icon">🛠️</div>
+          <h3>Robusto</h3>
+          <p>O conteúdo deve funcionar de forma confiável com diferentes tecnologias.</p>
+        </article>
+      </div>
+
+      <div class="grid grid-2">
+        <article class="callout">
+          <h3>Contraste mínimo citado no material</h3>
+          <p>
+            Para texto normal, o conteúdo original destaca contraste mínimo de
+            <strong>4,5:1</strong>. Para texto grande, destaca <strong>3:1</strong>.
+          </p>
+        </article>
+
+        <article class="callout">
+          <h3>Boas práticas de cor</h3>
+          <p>
+            Priorize combinações de alto contraste, evite depender apenas de pares como
+            verde/vermelho e complemente informações visuais com ícones, rótulos ou texturas.
+          </p>
+        </article>
+      </div>
+
+      <h3 style="margin-top:32px;">Exemplo de paleta apresentada no material</h3>
+      <div class="palette" aria-label="Exemplo de paleta acessível">
+        <div class="swatch swatch-1">#1A1A2E</div>
+        <div class="swatch swatch-2">#E94560 <small>sobre #16213E</small></div>
+        <div class="swatch swatch-3">#0F3460</div>
+        <div class="swatch swatch-4">#E0E0E0</div>
+      </div>
+    </section>
+
+    <section class="section" id="uxui">
+      <div class="section-head">
+        <div>
+          <span class="section-tag">05 · Aplicação</span>
+          <h2>UX/UI no desenvolvimento</h2>
+        </div>
+        <p class="lead">
+          UX e UI são disciplinas complementares. UX trabalha a jornada, as necessidades e
+          as sensações do usuário; UI se concentra nos elementos visuais e interativos que dão
+          forma à interface.
+        </p>
+      </div>
+
+      <div class="grid grid-3">
+        <article class="card">
+          <div class="mini-icon">🧑‍🤝‍🧑</div>
+          <h3>Pesquisa com usuários</h3>
+          <p>Entrevistas, questionários e testes ajudam a compreender o público antes de tomar decisões de interface.</p>
+        </article>
+
+        <article class="card">
+          <div class="mini-icon">🧱</div>
+          <h3>Wireframes e protótipos</h3>
+          <p>Esboços de baixa e alta fidelidade permitem testar estrutura, fluxo e ideias antes da implementação definitiva.</p>
+        </article>
+
+        <article class="card">
+          <div class="mini-icon">🪄</div>
+          <h3>Design de interação</h3>
+          <p>Animações, microinterações e feedbacks ajudam a comunicar ações e tornar o uso mais claro.</p>
+        </article>
+
+        <article class="card">
+          <div class="mini-icon">🎨</div>
+          <h3>Design visual</h3>
+          <p>Tipografia, cores, espaçamento e hierarquia organizam o conteúdo e influenciam a legibilidade.</p>
+        </article>
+
+        <article class="card">
+          <div class="mini-icon">🧪</div>
+          <h3>Testes de usabilidade</h3>
+          <p>A validação com usuários reais permite identificar dificuldades que podem não ser visíveis apenas para a equipe.</p>
+        </article>
+
+        <article class="card">
+          <div class="mini-icon">💻</div>
+          <h3>Implementação consciente</h3>
+          <p>Conhecimentos de UX/UI ajudam desenvolvedores front-end a construir interfaces funcionais, bonitas e centradas no usuário.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="conclusao">
+      <div class="summary">
+        <span class="section-tag">Conclusão</span>
+        <h2>Uma boa interface não é apenas bonita.</h2>
+        <p>
+          Ela precisa entender o usuário, resolver um problema real, comunicar claramente o que está acontecendo,
+          prevenir e explicar erros, ser consistente, acessível e fácil de aprender. IHC oferece a base; Design Thinking
+          orienta o processo; as Heurísticas de Nielsen ajudam a avaliar; a WCAG reforça a acessibilidade; e UX/UI conecta
+          tudo isso à construção prática da interface.
+        </p>
+        <p>
+          Em conjunto, esses conceitos ajudam designers e desenvolvedores a criar produtos digitais mais eficientes,
+          intuitivos, inclusivos e agradáveis.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Site único de apresentação — IHC · Design Thinking · Heurísticas de Nielsen · WCAG · UX/UI
+  </footer>
+
+  <script>
+    const progress = document.getElementById('progress');
+    const navLinks = [...document.querySelectorAll('nav a')];
+    const sections = [...document.querySelectorAll('section[id]')];
+
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      progress.style.width = pct + '%';
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.classList.toggle(
+              'active',
+              link.getAttribute('href') === '#' + entry.target.id
+            );
+          });
+        }
+      });
+    }, { rootMargin: '-38% 0px -54% 0px', threshold: 0 });
+
+    sections.forEach(section => observer.observe(section));
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  </script>
+</body>
+</html>
